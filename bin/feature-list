@@ -1,0 +1,67 @@
+#!/usr/local/bin/perl
+#
+# feature-list - list the post-5.8 features available in your perl
+#
+
+use strict;
+use warnings;
+use Getopt::Long;
+use List::Util        qw/ max /;
+use Perl::FeatureList qw/ features_in_your_perl
+                          features_in_later_perls
+                          get_feature /;
+
+my $usage_string = "usage: $0 [--future | -f ] [feature]\n";
+my $show_future_features;
+my %typemap = (
+    'feature'      => 'F',
+    'experimental' => 'X',
+    'built-in'     => '',
+);
+
+GetOptions(
+    'future|f' => \$show_future_features
+) || die $usage_string;
+
+die $usage_string if @ARGV > 1;
+show_feature_help($ARGV[0]) if @ARGV == 1;
+
+my @available_features = features_in_your_perl($]);
+display_feature_table(
+    \@available_features,
+    "new features available in perl $]"
+);
+
+if ($show_future_features) {
+    my @later_features = features_in_later_perls($]);
+    display_feature_table(
+        \@later_features,
+        "features available in later versions of perl"
+    );
+}
+
+sub display_feature_table
+{
+    my ($feature_ref, $title) = @_;
+    my @features = @$feature_ref;
+    my $max_name_len = max map { length($_->{name}) } @features;
+
+    print "\n---- $title ----\n";
+    foreach my $feature (sort { $a->{version} cmp $b->{version} } @features) {
+        printf "%1s  %-${max_name_len}s   %s\n",
+            $typemap{ $feature->{type} },
+            $feature->{name},
+            $feature->{short};
+    }
+    print "\n";
+}
+
+sub show_feature_help
+{
+    my $feature_name = shift;
+
+    my $feature = get_feature($feature_name)
+                  // die "feature '$feature_name' not found\n";
+    print $feature->{help};
+    exit 0;
+}
