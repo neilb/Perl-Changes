@@ -105,7 +105,7 @@ my @features = (
         short   => 'controls whether the legacy $[ variable is available',
         type    => [
                        { version => '5.018000', type => 'experimental' },
-                       { version => '5.026000', type => 'feature' },
+                       { version => '5.026000', type => 'built-in' },
                    ],
     },
 
@@ -122,7 +122,7 @@ my @features = (
         short   => 'enables postfix dereference syntax',
         type    => [
                        { version => '5.020000', type => 'experimental' },
-                       { version => '5.024000', type => 'feature' },
+                       { version => '5.024000', type => 'built-in' },
                    ],
     },
 
