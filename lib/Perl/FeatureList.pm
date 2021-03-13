@@ -10,6 +10,7 @@ use Ref::Util  qw/ is_arrayref /;
 our @EXPORT_OK = qw/
                     features_in_your_perl
                     features_in_later_perls
+                    features_in_release
                     get_feature
                    /;
 
@@ -20,6 +21,7 @@ my @features = (
         version => '5.010000',
         short   => 'just like print, but adds a newline',
         type    => 'feature',
+        size    => 'major',
     },
 
     {
@@ -27,6 +29,7 @@ my @features = (
         version => '5.010000',
         short   => '// is like || but on definedness rather than truthiness',
         type    => 'built-in',
+        size    => 'major',
     },
 
     {
@@ -34,6 +37,23 @@ my @features = (
         version => '5.010000',
         short   => 'lexically scoped variables with persistent values',
         type    => 'feature',
+        size    => 'major',
+    },
+
+    {
+        name    => 'named-capture',
+        version => '5.010000',
+        short   => 'ability to name capture parens in a regex',
+        type    => 'built-in',
+        size    => 'minor',
+    },
+
+    {
+        name    => 'UNITCHECK',
+        version => '5.010000',
+        short   => 'code block run after enclosing unit has been compiled',
+        type    => 'built-in',
+        size    => 'minor',
     },
 
     {
@@ -41,6 +61,7 @@ my @features = (
         version => '5.010001',
         short   => 'perlish switch statement',
         type    => 'experimental',
+        size    => 'major',
     },
 
     {
@@ -48,6 +69,7 @@ my @features = (
         version => '5.012000',
         short   => 'tells compiler to use Unicode rules for all string ops',
         type    => 'feature',
+        size    => 'major',
     },
 
     {
@@ -55,6 +77,7 @@ my @features = (
         version => '5.020000',
         short   => 'unpacking of subroutine arguments into lexical variables',
         type    => 'experimental',
+        size    => 'major',
     },
 
     {
@@ -62,6 +85,7 @@ my @features = (
         version => '5.032000',
         short   => 'infix "isa" operator to test if $object isa $class',
         type    => 'feature',
+        size    => 'major',
     },
 
     {
@@ -69,6 +93,7 @@ my @features = (
         version => '5.032000',
         short   => 'pragma to disable indirect method calling syntax',
         type    => 'feature',
+        size    => 'major',
     },
 
     {
@@ -76,6 +101,7 @@ my @features = (
         version => '5.016000',
         short   => 'enables __SUB__ token that refers to current subroutine',
         type    => 'feature',
+        size    => 'major',
     },
 
     {
@@ -83,6 +109,7 @@ my @features = (
         version => '5.016000',
         short   => 'controls whether the legacy $[ variable is available',
         type    => 'feature',
+        size    => 'minor',
     },
 
     {
@@ -90,6 +117,7 @@ my @features = (
         version => '5.016000',
         short   => 'makes string eval work more consistently with Unicode',
         type    => 'feature',
+        size    => 'major',
     },
 
     {
@@ -97,6 +125,7 @@ my @features = (
         version => '5.016000',
         short   => 'adds an evalbytes keyword that operates on a byte stream',
         type    => 'feature',
+        size    => 'major',
     },
 
     {
@@ -107,6 +136,7 @@ my @features = (
                        { version => '5.018000', type => 'experimental' },
                        { version => '5.026000', type => 'built-in' },
                    ],
+        size    => 'major',
     },
 
     {
@@ -114,6 +144,7 @@ my @features = (
         version => '5.016000',
         short   => 'enables fc(), which implements Unicode casefolding',
         type    => 'feature',
+        size    => 'major',
     },
 
     {
@@ -124,6 +155,7 @@ my @features = (
                        { version => '5.020000', type => 'experimental' },
                        { version => '5.024000', type => 'built-in' },
                    ],
+        size    => 'major',
     },
 
     {
@@ -134,6 +166,7 @@ my @features = (
                        { version => '5.020000', type => 'experimental' },
                        { version => '5.024000', type => 'feature' },
                    ],
+        size    => 'major',
     },
 
     {
@@ -141,6 +174,7 @@ my @features = (
         version => '5.022000',
         short   => 'enables aliasing via assignment to references',
         type    => 'experimental',
+        size    => 'major',
     },
 
     {
@@ -148,6 +182,7 @@ my @features = (
         version => '5.022000',
         short   => 'introduces bitwise string operators',
         type    => 'experimental',
+        size    => 'major',
     },
 
     {
@@ -155,6 +190,7 @@ my @features = (
         version => '5.026000',
         short   => 'allows a reference to a variable to be declared',
         type    => 'experimental',
+        size    => 'major',
     },
 
     {
@@ -162,25 +198,36 @@ my @features = (
         version => '5.026000',
         short   => 'lets you indent heredoc, including delimiter',
         type    => 'built-in',
+        size    => 'major',
     },
 
 );
 
 sub features_in_your_perl
 {
-    my $perl_version = shift;
+    my ($perl_version, $include_minor) = @_;
 
     return map { _select_type($_, $perl_version) }
-           grep { $_->{version} le $perl_version }
+           grep { $_->{version} le $perl_version && ($include_minor || $_->{size} eq 'major') }
            @features;
 }
 
 sub features_in_later_perls
 {
-    my $perl_version = shift;
+    my ($perl_version, $include_minor) = @_;
 
     return map { _select_type($_, $perl_version) }
-           grep { $_->{version} gt $perl_version }
+           grep { $_->{version} gt $perl_version && ($include_minor || $_->{size} eq 'major') }
+           @features;
+}
+
+sub features_in_release
+{
+    my $version      = shift;
+    my $norm_version = _normalise_version($version);
+
+    return map { _select_type($_, $norm_version) }
+           grep { $_->{version} =~ /^$norm_version/ }
            @features;
 }
 
@@ -203,6 +250,26 @@ sub _select_type
 
 }
 
+# 5.10   => 5.010
+# 5.10.1 => 5.010001
+# I thought version->parse->numify would do this,
+# but it gets 5.10 "wrong"
+sub _normalise_version
+{
+    my $version = shift;
+
+    my ($r, $v, $s) = $version =~ m!^([0-9]+)\.([0-9]+)(?:\.([0-9]+))?$!;
+
+    $v = '0' . $v while length($v) % 3;
+    $version = $r . '.' . $v;
+
+    if (defined $s) {
+        $s = '0' . $s while length($s) % 3;
+        $version .= $s;
+    }
+
+    return $version;
+}
 
 sub get_feature
 {
@@ -504,4 +571,25 @@ signatures
 
     This feature was introduced in 5.20, and is still experimental
     as of 5.32.
+
+named-capture
+
+    Name a capture buffer in a regex, with (?<NAME>...) so you
+    then refer to it by name, via special hashes %+ and %-.
+
+        if ($input =~ /(?<name>[^@]+)@(?<domain>.*)$/) {
+            print "domain = $+{domain}\n";
+        }
+
+    If you use the same named buffer more than once in a
+    pattern, use the %+ hash, where the value will be an
+    array ref.
+
+UNITCHECK
+
+    A special code block, like BEGIN and END.
+    It is executed just after the unit (e.g. file) which
+    defined it has been compiled.
+
+    See "perldoc perlmod" for more information.
 

@@ -3,6 +3,7 @@
 
 **Note**: this is currently a proof of concept -- I just hacked up the idea,
 following a discussion on how aware people are of the "new" features in their Perl.
+It's very much a work in progress, with all aspects likely to change.
 
 This distribution contains the module `Perl::FeatureList` and a script `feature-list`
 that provides a command-line interface to the information in the module.
@@ -10,10 +11,9 @@ that provides a command-line interface to the information in the module.
 Where [`Module::CoreList`](https://metacpan.org/pod/Module::CoreList)
 provides a list of the core modules that are shipped with Perl,
 `Perl::FeatureList` provides a list of the language features
-that have been introduced
-post-5.8.
+that have been introduced post-5.8.
 
-When you run the script, it gets a list of the features that have been introduced up to
+When you run the script, it gets a list of the main features that have been introduced up to
 and including the version that you're running, and presents them in a table:
 
     % feature-list
@@ -77,3 +77,18 @@ features that have been introduced since your version of Perl was released:
 At the moment this mainly lists features and experiments;
 I need to go through the perl deltas for all releases since 5.10.0
 and add appropriate changes.
+
+The `**-a**` (or `**all**`) switch will display all changes, not just the minor ones.
+The `**-w**` (or `**wide**`) switch will include the version where the change was
+introduced.
+
+You can also give a Perl version on the command-line, to list all changes in that release:
+
+    % feature-list -a 5.10.0
+
+    F  say             just like print, but adds a newline
+       defined-or      // is like || but on definedness rather than truthiness
+    F  state           lexically scoped variables with persistent values
+       named-capture   ability to name capture parens in a regex
+       UNITCHECK       code block run after enclosing unit has been compiled
+
