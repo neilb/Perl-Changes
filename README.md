@@ -5,11 +5,14 @@
 following a discussion on how aware people are of the "new" features in their Perl.
 It's very much a work in progress, with all aspects likely to change.
 
-This distribution contains the module `Perl::FeatureList` and a script `feature-list`
-that provides a command-line interface to the information in the module.
+This distribution contains the module `Perl::FeatureList` and a script `feature-list`.
 
-Where [`Module::CoreList`](https://metacpan.org/pod/Module::CoreList)
-provides a list of the core modules that are shipped with Perl,
+I wondered if there was a single place where I could find all the recent features,
+and whether they required a feature guard, or are experimental.
+I couldn't find one,
+so I wondered if something analogous to [`Module::CoreList`](https://metacpan.org/pod/Module::CoreList)
+(which provides a list of the core modules that are shipped with Perl)
+might be useful.
 `Perl::FeatureList` provides a list of the language features
 that have been introduced post-5.8.
 
@@ -78,8 +81,8 @@ At the moment this mainly lists features and experiments;
 I need to go through the perl deltas for all releases since 5.10.0
 and add appropriate changes.
 
-The `**-a**` (or `**all**`) switch will display all changes, not just the minor ones.
-The `**-w**` (or `**wide**`) switch will include the version where the change was
+The **`-a`** (or **`--all`**) switch will display all changes, not just the minor ones.
+The **`-w`** (or **`--wide`**) switch will include the version where the change was
 introduced.
 
 You can also give a Perl version on the command-line, to list all changes in that release:
