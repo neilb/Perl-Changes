@@ -74,3 +74,6 @@ features that have been introduced since your version of Perl was released:
     F  isa                infix "isa" operator to test if $object isa $class
     F  indirect           pragma to disable indirect method calling syntax
 
+At the moment this mainly lists features and experiments;
+I need to go through the perl deltas for all releases since 5.10.0
+and add appropriate changes.
