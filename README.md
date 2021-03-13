@@ -87,7 +87,7 @@ introduced.
 
 You can also give a Perl version on the command-line, to list all changes in that release:
 
-    % feature-list -a 5.10.0
+    % feature-list 5.10.0
 
     F  say             just like print, but adds a newline
        defined-or      // is like || but on definedness rather than truthiness
@@ -95,3 +95,4 @@ You can also give a Perl version on the command-line, to list all changes in tha
        named-capture   ability to name capture parens in a regex
        UNITCHECK       code block run after enclosing unit has been compiled
 
+The **`-a`** switch is implied when you give a version of Perl.

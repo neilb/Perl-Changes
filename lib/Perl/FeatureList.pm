@@ -226,6 +226,8 @@ sub features_in_release
     my $version      = shift;
     my $norm_version = _normalise_version($version);
 
+    # We always include major AND minor changes
+    # unlike with the two subs above
     return map { _select_type($_, $norm_version) }
            grep { $_->{version} =~ /^$norm_version/ }
            @features;
