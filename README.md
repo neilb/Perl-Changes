@@ -7,8 +7,10 @@ following a discussion on how aware people are of the "new" features in their Pe
 This distribution contains the module `Perl::FeatureList` and a script `feature-list`
 that provides a command-line interface to the information in the module.
 
-Where [`Module::CoreList`]() provides a list of the core modules that are shipped with Perl,
-`Perl::FeatureList` provides a list of the language features that have been introduced
+Where [`Module::CoreList`](https://metacpan.org/pod/Module::CoreList)
+provides a list of the core modules that are shipped with Perl,
+`Perl::FeatureList` provides a list of the language features
+that have been introduced
 post-5.8.
 
 When you run the script, it gets a list of the features that have been introduced up to
