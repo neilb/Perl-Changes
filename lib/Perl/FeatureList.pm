@@ -49,6 +49,14 @@ my @features = (
     },
 
     {
+        name    => 'recursive-regex',
+        version => '5.010000',
+        short   => 'ability for a regex to refer to itself',
+        type    => 'built-in',
+        size    => 'minor',
+    },
+
+    {
         name    => 'UNITCHECK',
         version => '5.010000',
         short   => 'code block run after enclosing unit has been compiled',
@@ -594,4 +602,28 @@ UNITCHECK
     defined it has been compiled.
 
     See "perldoc perlmod" for more information.
+
+isa
+
+    This allows the use of the isa infix operator, which tests whether
+    the scalar given by the left operand is an object of the class given
+    by the right operand. See "Class Instance Operator" in perlop for
+    more details.
+
+    This feature is available from Perl 5.32 onwards.
+
+indirect
+
+    This feature allows the use of indirect object syntax for method
+    calls, e.g. new Foo 1, 2;. It is enabled by default, but can be
+    turned off to disallow indirect object syntax.
+
+    This feature is available under this name from Perl 5.32 onwards.
+    In previous versions, it was simply on all the time. To disallow
+    (or warn on) indirect object syntax on older Perls,
+    see the indirect CPAN module.
+
+recursive-regex
+
+    Bleh
 
