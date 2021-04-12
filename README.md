@@ -1,11 +1,13 @@
 
-# Perl-FeatureList
+# Perl-Changes
 
 **Note**: this is currently a proof of concept -- I just hacked up the idea,
 following a discussion on how aware people are of the "new" features in their Perl.
 It's very much a work in progress, with all aspects likely to change.
 
-This distribution contains the module `Perl::FeatureList` and a script `feature-list`.
+This distribution contains the module `Perl::Changes` and a script `perl-changes`.
+Previously they were called `Perl::FeatureList` and `feature-list`,
+but Perl already defines "features" and they're a subset of all changes.
 
 I wondered if there was a single place where I could find all the recent features,
 and whether they required a feature guard, or are experimental.
@@ -13,15 +15,15 @@ I couldn't find one,
 so I wondered if something analogous to [`Module::CoreList`](https://metacpan.org/pod/Module::CoreList)
 (which provides a list of the core modules that are shipped with Perl)
 might be useful.
-`Perl::FeatureList` provides a list of the language features
+`Perl::Changes` provides a list of the language features
 that have been introduced post-5.8.
 
 When you run the script, it gets a list of the main features that have been introduced up to
 and including the version that you're running, and presents them in a table:
 
-    % feature-list
+    % perl-changes
 
-    ---- new features available in perl 5.016003 ----
+    ---- changes available in perl 5.016003 ----
     F  say               just like print, but adds a newline
        defined-or        // is like || but on definedness rather than truthiness
     F  state             lexically scoped variables with persistent values
@@ -40,7 +42,7 @@ If the first column is blank, then the feature is built in to your version of Pe
 
 You can get a brief summary of the feature:
 
-    % feature-list current_sub
+    % perl-changes current_sub
 
         This provides the "__SUB__" token that returns a reference to the
         current subroutine or "undef" outside of a subroutine.
@@ -50,7 +52,7 @@ You can get a brief summary of the feature:
 If you include the `--future` switch, then you'll also get a list of
 features that have been introduced since your version of Perl was released:
 
-    % feature-list --future
+    % perl-changes --future
 
     ---- new features available in perl 5.016003 ----
     F  say               just like print, but adds a newline
@@ -87,7 +89,7 @@ introduced.
 
 You can also give a Perl version on the command-line, to list all changes in that release:
 
-    % feature-list 5.10.0
+    % perl-changes 5.10.0
 
     F  say             just like print, but adds a newline
        defined-or      // is like || but on definedness rather than truthiness

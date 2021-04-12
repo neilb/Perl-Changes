@@ -1,4 +1,4 @@
-package Perl::FeatureList;
+package Perl::Changes;
 
 use parent 'Exporter';
 use strict;
@@ -8,13 +8,13 @@ use Clone::PP  qw/ clone /;
 use Ref::Util  qw/ is_arrayref /;
 
 our @EXPORT_OK = qw/
-                    features_in_your_perl
-                    features_in_later_perls
-                    features_in_release
-                    get_feature
+                    changes_in_your_perl
+                    changes_in_later_perls
+                    changes_in_release
+                    get_change
                    /;
 
-my @features = (
+my @changes = (
 
     {
         name    => 'say',
@@ -211,25 +211,25 @@ my @features = (
 
 );
 
-sub features_in_your_perl
+sub changes_in_your_perl
 {
     my ($perl_version, $include_minor) = @_;
 
     return map { _select_type($_, $perl_version) }
            grep { $_->{version} le $perl_version && ($include_minor || $_->{size} eq 'major') }
-           @features;
+           @changes;
 }
 
-sub features_in_later_perls
+sub changes_in_later_perls
 {
     my ($perl_version, $include_minor) = @_;
 
     return map { _select_type($_, $perl_version) }
            grep { $_->{version} gt $perl_version && ($include_minor || $_->{size} eq 'major') }
-           @features;
+           @changes;
 }
 
-sub features_in_release
+sub changes_in_release
 {
     my $version      = shift;
     my $norm_version = _normalise_version($version);
@@ -238,25 +238,25 @@ sub features_in_release
     # unlike with the two subs above
     return map { _select_type($_, $norm_version) }
            grep { $_->{version} =~ /^$norm_version/ }
-           @features;
+           @changes;
 }
 
 sub _select_type
 {
-    my ($feature, $version) = @_;
-    $feature = clone($feature);
+    my ($change, $version) = @_;
+    $change = clone($change);
 
-    if (is_arrayref($feature->{type})) {
+    if (is_arrayref($change->{type})) {
         my $type;
-        foreach my $subtype (@{ $feature->{type} }) {
+        foreach my $subtype (@{ $change->{type} }) {
             if (!defined($type) || $subtype->{version} lt $version) {
                 $type = $subtype;
             }
         }
-        $feature->{type} = $type->{type};
+        $change->{type} = $type->{type};
     }
 
-    return $feature;
+    return $change;
 
 }
 
@@ -281,28 +281,28 @@ sub _normalise_version
     return $version;
 }
 
-sub get_feature
+sub get_change
 {
     my $name = shift;
-    my ($feature) =  grep { $_->{name} eq $name } @features;
-    return $feature;
+    my ($change) =  grep { $_->{name} eq $name } @changes;
+    return $change;
 }
 
 sub add_help_text_from_data
 {
     my $topic;
-    my $feature;
+    my $change;
     local $_;
 
     while (<DATA>) {
         if (/^(\S+)/) {
             $topic = $1;
-            ($feature) = grep { $_->{name} eq $topic } @features;
-            $feature->{help} = '';
+            ($change) = grep { $_->{name} eq $topic } @changes;
+            $change->{help} = '';
             next;
         }
         next unless defined $topic;
-        $feature->{help} .= $_;
+        $change->{help} .= $_;
     }
 }
 
@@ -312,13 +312,13 @@ add_help_text_from_data();
 
 =head1 NAME
 
-Perl::FeatureList - provides access to a list of features introduced to Perl post 5.8
+Perl::Changes - provides access to a list of changes introduced to Perl post 5.8
 
 =cut
 
-# We embed a small help text for each feature,
+# We embed a small help text for each change,
 # as if you've got an old version of Perl you
-# won't have the perldoc for some of the features.
+# won't have the perldoc for some of the changes.
 
 __DATA__
 

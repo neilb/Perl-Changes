@@ -1,0 +1,107 @@
+#!/usr/local/bin/perl
+#
+# perl-changes - list the post-5.8 changes available in your perl
+#
+
+use strict;
+use warnings;
+use Getopt::Long;
+use List::Util    qw/ max /;
+use Perl::Changes qw/ changes_in_your_perl
+                      changes_in_later_perls
+                      changes_in_release
+                      get_change /;
+
+my $usage_string       = "usage: $0 [--future | -f ] [<change> | <version>]\n";
+my $show_minor_changes = 0;
+my $show_more_stuff    = 0;
+my $show_future_changes;
+my %typemap = (
+    'feature'      => 'F',
+    'experimental' => 'X',
+    'built-in'     => '',
+);
+
+GetOptions(
+    'future|f'  => \$show_future_changes,
+    'all|a'     => \$show_minor_changes,
+    'wide|w'    => \$show_more_stuff,
+) || die $usage_string;
+
+die $usage_string if @ARGV > 1;
+
+if (@ARGV == 1) {
+    show_changes_in_release($ARGV[0]) if $ARGV[0] =~ /[0-9\.]/;
+    show_change_help($ARGV[0]);
+}
+
+my @available_changes = changes_in_your_perl($], $show_minor_changes);
+display_change_table(
+    \@available_changes,
+    "new changes available in perl $]"
+);
+
+if ($show_future_changes) {
+    my @later_changes = changes_in_later_perls($], $show_minor_changes);
+    display_change_table(
+        \@later_changes,
+        "changes available in later versions of perl"
+    );
+}
+
+sub display_change_table
+{
+    my ($change_ref, $title) = @_;
+    my @changes = @$change_ref;
+    my $max_name_len = max map { length($_->{name}) } @changes;
+
+    print "\n";
+    print "---- $title ----\n" if defined $title;
+    foreach my $change (sort { $a->{version} cmp $b->{version} } @changes) {
+        if ($show_more_stuff) {
+            printf "%1s  %-${max_name_len}s   %-7s %s\n",
+                $typemap{ $change->{type} },
+                $change->{name},
+                _concise_version($change->{version}),
+                $change->{short};
+        }
+        else {
+            printf "%1s  %-${max_name_len}s   %s\n",
+                $typemap{ $change->{type} },
+                $change->{name},
+                $change->{short};
+        }
+    }
+    print "\n";
+}
+
+sub show_change_help
+{
+    my $change_name = shift;
+
+    my $change = get_change($change_name)
+                  // die "change '$change_name' not found\n";
+    print $change->{help};
+    exit 0;
+}
+
+sub show_changes_in_release
+{
+    my $version  = shift;
+    my @changes = changes_in_release($version);
+
+    die "no changes found for '$version'\n" unless @changes > 0;
+
+    display_change_table(\@changes);
+    exit 0;
+}
+
+sub _concise_version
+{
+    my $version = shift;
+    my ($release, $major, $minor) = $version =~ m!^([0-9]+)\.([0-9]{3})([0-9]{3})!;
+    $major =~ s/^0+//;
+    $minor =~ s/^0// while length($minor) > 1;
+    return "${release}.${major}.${minor}";
+}
+
